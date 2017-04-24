@@ -269,7 +269,8 @@
       END
       
      SUBROUTINE init() 
-     WRITE(*,*) "This code is written by Yecheng Zhou. Please do not distribute it."
+     WRITE(*,*) "This code is written by Yecheng Zhou."
+     WRITE(*,*) "Please check information and updates on https://github.com/zhouych87/Numerical_Model"
      WRITE(*,*) "Details are shown in Phys. Chem. Chem. Phys., 18(6), 4476–4486. "
      WRITE(*,*) "Please cite it when you using my code"
      WRITE(*,*) "Any question please send email to zhouych87@gmail.com"
