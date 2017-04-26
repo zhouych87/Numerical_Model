@@ -1,10 +1,13 @@
 6 0 25 1 !recombination type, boundary field, dielectric, screen
 100  300 !MAX iteration, discrete points
 350 ! thickness
-0.017  0.011 ! mobility 
-1.55   736 !band gap, lifetime
+0.017  0.011 ! diffusion coefficient,de,dh 
+1.55   736 !band gap for absorption, charge carrier lifetime
+5.7E+4 ! absorption length 
+3.20E+18	3.39E+18 ! nc, nv 
+1.8  ! band gap for output voltage 
 0.2 1.e-20 !iteration step and converge criteria
 0.0000001 0.000001 ! field at boundary
-300  ! temperature
+300  ! working temperature
 1 ! light intensity 
 
