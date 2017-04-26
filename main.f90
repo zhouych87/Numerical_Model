@@ -6,7 +6,7 @@
       implicit none
       include 'mpif.h'
       INTEGER:: is,k,indexv(NE),mode,emode
-      REAL(16):: deriv,q1,c(NCI,NCJ,NCK),s(NSI,NSJ)
+      REAL(16):: deriv,q1,c(NCI,NCJ,NCK),s(NSI,NSJ),ac 
       REAL(16):: scalv(NE),y(NE,M),g,T,De,Dh,bgap,E0,Ed,LT,D
       integer :: myid,ierr,npcs,status(MPI_STATUS_SIZE) 
       real :: start, finish
@@ -34,14 +34,17 @@
            write(*,*) "Direct recombination, r calculated from exponentially distributed carriers."
         end if 
        ! mode>10: diffusion length change with temperature change 
-        read(301,*) itmax,npoint
+        read(301,*) itmax,npoint ! maximun iteration, discreting points 
         read(301,*) D     ! thickness of solar cell
-        D=D*1.0E-7 ! from nm to cm 
+             D=D*1.0E-7 ! from nm to cm 
         read(301,*) de,dh ! diffusion coefficient of electron and hole
-        read(301,*) bgap,LT ! generation rate(/cm^2) and lifetime(ns)
+        read(301,*) bgap,LT ! bgap for absoprtion (/cm^2) and lifetime(ns)
+        read(301,*) ac  ! absortption length cm 
+        read(301,*) nc,nv  ! a
+        read(301,*) bgapv ! ! bgap for output voltage 
         read(301,*) slowc,conv 
-        read(301,*) e0,ed  ! generation rate(/cm^2) and lifetime(ns)
-        read(301,*)  T 
+        read(301,*) e0,ed  ! field on two sides
+        read(301,*)  T   ! working temperature 
         read(301,*) lti ! light intensity 
 !        read(301,*)  
         close(301) 
@@ -52,7 +55,7 @@
            mode=mode-10 
         end if 
  !       write(*,*) de,dh
-        call IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,Emode)
+        call IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,ac,Emode)
 !        write(*,*) e0,ed
 !        read(*,*)
       call MPI_Finalize(ierr) 
@@ -62,7 +65,7 @@
       end program main 
 
 
-      SUBROUTINE IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,Emode)
+      SUBROUTINE IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,ac,Emode)
       use commondat
       ! USES plgndr,solvde
       !Sample program using solvde. Computes eigenvalues of spheroidal harmonics Smn(x; c)
@@ -70,12 +73,12 @@
       implicit none
       include 'mpif.h'
       INTEGER:: is,k,indexv(NE),mode ,emode
-      REAL(16):: c(NCI,NCJ,NCK),s(NSI,NSJ)
+      REAL(16):: c(NCI,NCJ,NCK),s(NSI,NSJ),ac
       REAL(16):: D,scalv(NE),y(NE,M),T,De,Dh,bgap,E0,Ed,LT,tmp
       integer :: myid,ierr,npcs,status(MPI_STATUS_SIZE) 
 
 !      n0=3.97E+18*1.6E-19 !Nc  integral of DOS
-       n0=3.97E+18*1.6E-19
+!       n0=3.97E+18*1.6E-19
 !       ni=n0*exp(-bgap/(2*kt))
        ni=1.0E+14*1.6E-19
 !      write(*,*) "please notice that the DOS of perovskite is 10^21 "
@@ -147,7 +150,7 @@
 !             scalv(7)=0.01
              scalv(1)=n0*exp(v/(2*kt)) 
 !             read(*,*) k 
-             call solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D)
+             call solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
 !             write(*,*) is,'end st:' ,st
       end do 
       return
@@ -155,13 +158,13 @@
     
           
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- SUBROUTINE deq(k,k1,k2,jsf,is1,isf,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D)
+ SUBROUTINE deq(k,k1,k2,jsf,is1,isf,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
  use commondat
  implicit none
  INTEGER:: is1,isf,jsf,k,k1,k2,indexv(nyj),i,mode
  REAL(16):: s(nsi,nsj),y(nyj,nyk),tmp1,tmp2,tmp,ac,D,g,T,De,Dh,bgap,E0,Ed,LT
 !      REAL(16):: temp,temp2 
-      ac=5.7E+4
+!      ac=5.7E+4
       D=h*(M-1)
       s=0 
 !      write(*,*) "k,  jsf , y31,y41"
