@@ -307,19 +307,19 @@
       jcf=ic3
       do it=1,itmax !Primary iteration loop.
           k=k1 !Boundary conditions at first point.
-          call deq(k,k1,k2,j9,ic3,ic4,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D)
+          call deq(k,k1,k2,j9,ic3,ic4,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
           call pinvs(ic3,ic4,j5,j9,jc1,k1,c,s) 
           if (st==0) then ; write(11,'(a,xf6.2)') "head voltage", bgap+V; return; end if  
           do  k=k1+1,k2 ! Finite difference equations at all point pairs.
             kp=k-1
 !            write(*,*) "points:", k  
-            call deq(k,k1,k2,j9,ic1,ic4,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D)
+            call deq(k,k1,k2,j9,ic1,ic4,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
             call red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp, c,s)
             call pinvs(ic1,ic4,j3,j9,jc1,k,c,s)
           if (st==0) then ; write(11,'(a,xf6.2)') "mid voltage", bgap+V; return; end if  
           end do 
           k=k2+1 !Final boundary conditions.
-          call deq(k,k1,k2,j9,ic1,ic2,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D)
+          call deq(k,k1,k2,j9,ic1,ic2,indexv,s,y,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
           call red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,c,s)
           call pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s)
           if (st==0) then ; write(11,'(a,xf6.2)') "tail voltage", bgap+V; return; end if  
