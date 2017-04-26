@@ -134,21 +134,21 @@
                  y(6,k)=(D-x(k))*0.01/D  ! jn
                  y(2,k)=0.01*x(k)/D       !jp
                  y(3,k)=E0
-                 y(4,k)=n0*exp(v/(2*kt))*EXP(x(k)/D) !n 
-                 y(5,k)=n0*exp(v/(2*kt))*EXP(1-x(k)/D) !p
+                 y(4,k)=nc*exp(v/(2*kt))*EXP(x(k)/D) !n 
+                 y(5,k)=nv*exp(v/(2*kt))*EXP(1-x(k)/D) !p
 !                 y(6,k)=0.3
 !                 y(7,k)=0.01
-                 y(1,k)=n0*exp(v/(2*kt))
+                 y(1,k)=nc*exp(v/(2*kt))
              end do 
 !             write(*,*) v
              scalv(6)=0.01
              scalv(2)=0.01
              scalv(3)=E0
-             scalv(4)=n0*exp(v/(2*kt))
-             scalv(5)=n0*exp(v/(2*kt))
+             scalv(4)=nc*exp(v/(2*kt))
+             scalv(5)=nv*exp(v/(2*kt))
 !             scalv(6)=1
 !             scalv(7)=0.01
-             scalv(1)=n0*exp(v/(2*kt)) 
+             scalv(1)=nc*exp(v/(2*kt)) 
 !             read(*,*) k 
              call solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
 !             write(*,*) is,'end st:' ,st
@@ -181,11 +181,11 @@
   else if(k.gt.k2) then !Boundary conditions at x=M, Spiro.
               s(1,ne+3)=1.0 !Equation (17.4.32).
               s(2,ne+6)=1.0;  
-              s(3,ne+5)=1.0;   s(3,ne+1)=exp(v/(kt))*n0*n0/(y(1,m)*y(1,m))
+              s(3,ne+5)=1.0;   s(3,ne+1)=exp(v/(kt))*nc*nv/(y(1,m)*y(1,m))
               
               s(1,jsf)=y(3,m)-Ed
               s(2,jsf)=y(6,m) !jn=0
-              s(3,jsf)=y(5,m)-exp(v/(kt))*n0*n0/y(1,m)
+              s(3,jsf)=y(5,m)-exp(v/(kt))*nc*nv/y(1,m)
 !              do  i=1,6
 !               write(*,"(13(g11.4))")  s(i,:) 
 !              end do
@@ -360,7 +360,7 @@ if (npoint==1)              write(*,"(a,xi0,2(xg15.4),xi0,xg15.4)") "error for e
 !         write(111,"(10(xg15.8))") x(k),(y(j,k),j=1,ne),cp,-3.94+kt*log(y(4,k)/n0),-5.50-kt*log(y(5,k)/n0)
 !             end do 
 !             close(111)
-           write (*,"(i6, 2(xf15.8),3(xg15.8))") it, bgap*1000+25.6*t/298*log(y(4,1)*y(5,m)/n0**2),y(6,1)*1000,y(4,1),y(5,m),y(1,1)
+           write (*,"(i6, 2(xf15.8),3(xg15.8))") it, bgapv*1000+25.6*t/298*log(y(4,1)*y(5,m)/nc*nv),y(6,1)*1000,y(4,1),y(5,m),y(1,1)
              return
           end if 
           
