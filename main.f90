@@ -41,6 +41,7 @@
         read(301,*) bgap,LT ! bgap for absoprtion (/cm^2) and lifetime(ns)
         read(301,*) ac  ! absortption length cm 
         read(301,*) nc,nv  ! a
+        nc=nc*1.6E-19;nv=nv*1.6E-19
         read(301,*) bgapv ! ! bgap for output voltage 
         read(301,*) slowc,conv 
         read(301,*) e0,ed  ! field on two sides
@@ -108,7 +109,7 @@
       indexv(5)=5
       indexv(6)=6
 
-     tmp=bgap/D
+     tmp=bgapv/D
 
       call MPI_INIT( ierr )     
       call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )     
@@ -120,10 +121,10 @@
             st =1
             y=0;s=0;c=0
 !            write(*,*) is,'begin st',st
-             v=1.3*is/npoint - bgap ! v=0-1300,v=
+             v=1.3*is/npoint - bgapv ! v=0-1300,v=
              if (emode==1) then 
-               E0=-0.05*(V+bgap)/D!+650!  -0.05*1.0/D;  !! V/cm
-               Ed=-0.05*(V+bgap)/D!+650!+0.05*0.3*tmp! -0.05*1.0/D;  !! V/cm
+               E0=-0.05*(V+bgapv)/D!+650!  -0.05*1.0/D;  !! V/cm
+               Ed=-0.05*(V+bgapv)/D!+650!+0.05*0.3*tmp! -0.05*1.0/D;  !! V/cm
 !               write(*,*) "Please notice the code of this part!!"
 !               Ed=V/D
 !               E0=ED
@@ -152,6 +153,7 @@
 !             read(*,*) k 
              call solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
 !             write(*,*) is,'end st:' ,st
+            if (y(6,1)*1000<-100.00) exit 
       end do 
       return
       END
@@ -279,13 +281,13 @@
      WRITE(*,*) "Any question please send email to zhouych87@gmail.com"
      END 
       
-      SUBROUTINE solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D)
+      SUBROUTINE solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
        use commondat
       implicit none
       INTEGER:: indexv(nyj),mode
       REAL(16):: c(nci,ncj,nck),s(nsi,nsj),scalv(nyj),y(nyj,nyk),T,De,Dh,bgap,E0,Ed,LT,D,cp
       INTEGER:: ic1,ic2,ic3,ic4,it,j,j1,j2,j3,j4,j5,j6,j7,j8,j9,jc1,jcf,jv,k,k1,k2,km,kp,nvars,kmax(ne)
-      REAL(16):: err,errj,fac,vmax,vz,ermax(ne)
+      REAL(16):: err,errj,fac,vmax,vz,ermax(ne),ac
       character(20)::flname 
       k1=1 ! Set up row and column markers.
       k2=m
@@ -360,7 +362,7 @@ if (npoint==1)              write(*,"(a,xi0,2(xg15.4),xi0,xg15.4)") "error for e
 !         write(111,"(10(xg15.8))") x(k),(y(j,k),j=1,ne),cp,-3.94+kt*log(y(4,k)/n0),-5.50-kt*log(y(5,k)/n0)
 !             end do 
 !             close(111)
-           write (*,"(i6, 2(xf15.8),3(xg15.8))") it, bgapv*1000+25.6*t/298*log(y(4,1)*y(5,m)/nc*nv),y(6,1)*1000,y(4,1),y(5,m),y(1,1)
+           write (*,"(i6, 2(xg15.8),3(xg15.8))") it, bgapv*1000+25.6*t/298*log(y(4,1)*y(5,m)/nc*nv),y(6,1)*1000,y(4,1),y(5,m),y(1,1)
              return
           end if 
           
