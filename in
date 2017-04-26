@@ -10,4 +10,5 @@
 0.0000001 0.000001 ! field at boundary
 300  ! working temperature
 1 ! light intensity 
+test githup
 
