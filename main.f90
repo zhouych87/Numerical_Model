@@ -41,7 +41,7 @@
         read(301,*) bgap,LT ! bgap for absoprtion (/cm^2) and lifetime(ns)
         read(301,*) ac  ! absortption length cm 
         read(301,*) nc,nv  ! a
-        nc=nc*1.6E-19;nv=nv*1.6E-19
+             nc=nc*1.6E-19;nv=nv*1.6E-19
         read(301,*) bgapv ! ! bgap for output voltage 
         read(301,*) slowc,conv 
         read(301,*) e0,ed  ! field on two sides
@@ -97,7 +97,7 @@
           LT=6.67E-04/LT**2
           LT=lt/1.6E-19
       else 
-            LT=LT*1.0E-9    ! t0
+            LT=LT*1.0E-9    ! mode=1,4,5
          write(*,"(a,g15.7)") "t0 model lifetime", Lt
     end if 
 
@@ -121,7 +121,7 @@
             st =1
             y=0;s=0;c=0
 !            write(*,*) is,'begin st',st
-             v=1.3*is/npoint - bgapv ! v=0-1300,v=
+             v=bgapv*is/npoint - bgapv ! v=0-1300,v=
              if (emode==1) then 
                E0=-0.05*(V+bgapv)/D!+650!  -0.05*1.0/D;  !! V/cm
                Ed=-0.05*(V+bgapv)/D!+650!+0.05*0.3*tmp! -0.05*1.0/D;  !! V/cm

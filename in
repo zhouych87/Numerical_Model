@@ -1,7 +1,7 @@
-6 0 25 1 !recombination type, boundary field, dielectric, screen
+4 0 4 1 !recombination type, boundary field, dielectric, screen
 100  300 !MAX iteration, discrete points
 120 ! thickness
-4.0e-5  4.0e-5 ! diffusion coefficient,de,dh 
+6.88e-6  2.86e-5 ! diffusion coefficient,de,dh 
 1.88   5000 !band gap for absorption, charge carrier lifetime
 1.5E+6 ! absorption length 
 3.20E+18  3.39E+18 ! nc, nv 
