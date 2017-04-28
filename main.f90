@@ -84,8 +84,10 @@
        ni=1.0E+14*1.6E-19
 !      write(*,*) "please notice that the DOS of perovskite is 10^21 "
 !      write(*,"(a,2xg15.6)") "ni;", ni
-      gtmp=-2.2E+17*bgap+5.115E+17
-      gtmp=lti*gtmp
+!      gtmp=-2.2E+17*bgap+5.115E+17 ! FROM M^2 TO CM^2 /10000 PCCP,18,4476-4486. http://dx.doi.org/10.1039/C5CP05371D
+      gtmp=-3.06E+17*bgap+8.43E+17 ! FROM M^2 TO CM^2 /10000,UPDATE IN OSC paper, 0.9eV-2.1eV 
+      
+      gtmp=lti*gtmp ! light intensity 
 !       write(*,"(2(xg15.7))") (exp(1.0)-1)**2/(2*LT*LT*1.6E-19*gtmp/D), 3.18761/(1.6E-19*5.7E+4*gtmp*Lt)
             
       if (mode == 2 .or. mode==6 .or. mode==7) then 
