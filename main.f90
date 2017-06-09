@@ -5,10 +5,10 @@
       !for m   0 and n   m. In the program, m is mm, c2 is c2, 
       implicit none
       include 'mpif.h'
-      INTEGER:: is,k,indexv(NE),mode,emode
-      REAL(16):: deriv,q1,c(NCI,NCJ,NCK),s(NSI,NSJ),ac 
+      INTEGER:: is,k,indexv(NE),mode,emode,i
+      REAL(16):: deriv,q1,c(NCI,NCJ,NCK),s(NSI,NSJ),ac,detail(10)
       REAL(16):: scalv(NE),y(NE,M),g,T,De,Dh,bgap,E0,Ed,LT,D
-      integer :: myid,ierr,npcs,status(MPI_STATUS_SIZE) 
+      integer :: myid,ierr,npcs,status(MPI_STATUS_SIZE),ndtl
       real :: start, finish
 !       T=298 kt=25.6meV
 !      T0=57  = 273.15+57=330.15K
@@ -47,7 +47,10 @@
         read(301,*) e0,ed  ! field on two sides
         read(301,*)  T   ! working temperature 
         read(301,*) lti ! light intensity 
-!        read(301,*)  
+        read(301,*)  ndtl
+        if (ndtl > 0) then
+           read(301,*)  (detail(i),i=1,ndtl)
+        end if 
         close(301) 
              kt=0.0256*t/298 
         if (mode>10) then 
@@ -56,7 +59,7 @@
            mode=mode-10 
         end if 
  !       write(*,*) de,dh
-        call IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,ac,Emode)
+        call IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,ac,Emode,ndtl,detail)
 !        write(*,*) e0,ed
 !        read(*,*)
       call MPI_Finalize(ierr) 
@@ -66,17 +69,18 @@
       end program main 
 
 
-      SUBROUTINE IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,ac,Emode)
+      SUBROUTINE IV(mode,T,De,Dh,bgap,E0,Ed,LT,D,ac,Emode,ndtl,detail)
       use commondat
       ! USES plgndr,solvde
       !Sample program using solvde. Computes eigenvalues of spheroidal harmonics Smn(x; c)
       !for m   0 and n   m. In the program, m is mm, c2 is c2, 
       implicit none
       include 'mpif.h'
-      INTEGER:: is,k,indexv(NE),mode ,emode
-      REAL(16):: c(NCI,NCJ,NCK),s(NSI,NSJ),ac
+      INTEGER:: is,k,indexv(NE),mode ,emode,ndtl,j,i
+      REAL(16):: c(NCI,NCJ,NCK),s(NSI,NSJ),ac,detail(10)
       REAL(16):: D,scalv(NE),y(NE,M),T,De,Dh,bgap,E0,Ed,LT,tmp
       integer :: myid,ierr,npcs,status(MPI_STATUS_SIZE) 
+      character(20):: vname
 
 !      n0=3.97E+18*1.6E-19 !Nc  integral of DOS
 !       n0=3.97E+18*1.6E-19
@@ -153,6 +157,24 @@
 !             read(*,*) k 
              call solvde(scalv,indexv,y,c,s,mode,T,De,Dh,bgap,E0,Ed,LT,D,ac)
 !             write(*,*) is,'end st:' ,st
+             v= bgapv*1000+25.6*t/298*log(y(4,1)*y(5,m)/nc*nv)
+           write (*,"(2(xg15.8),3(xg15.8))") v, y(6,1)*1000,y(4,1),y(5,m),y(1,1)
+           
+           if (ndtl>0 ) then 
+              do i=1,ndtl 
+                if ( abs(v-detail(i)) < 1300/npoint) then 
+                write(vname,'(ai0)') 'v', floor(detail(i))
+                open(200,file=vname,status="replace") 
+                write(200,"(8(ax))") 'x','jn','jp','E','n', 'p','Efn','Efp'
+                do j=1,M 
+                  write(200,'(8(g15.8x))') x(j),y(6,j),y(2,j),y(3,j),y(4,j),y(5,j),&
+                  & -3.9+kt*log(y(4,j)/nc), -5.4-kt*log(y(5,j)/nv)
+                end do 
+                close(200)
+                end if 
+              end do 
+            end if
+           
             if (y(6,1)*1000<-100.00) exit 
       end do 
       return
@@ -341,7 +363,7 @@
                   errj=errj+vz
               end do 
               scalv(j)=maxval(abs(y(j,:)))
-if (npoint==1)              write(*,"(a,xi0,2(xg15.4),xi0,xg15.4)") "error for equation:",j,errj,errj/scalv(j),km,vmax/scalv(j)
+if (npoint==1)    write(*,"(a,xi0,2(xg15.4),xi0,xg15.4)") "error for equation:",j,errj,errj/scalv(j),km,vmax/scalv(j)
               err=err+errj/scalv(j) !Note weighting for each dependent variable.
               ermax(j)=c(jv,1,km)/scalv(j)
               kmax(j)=km 
@@ -362,7 +384,7 @@ if (npoint==1)              write(*,"(a,xi0,2(xg15.4),xi0,xg15.4)") "error for e
 !         write(111,"(10(xg15.8))") x(k),(y(j,k),j=1,ne),cp,-3.94+kt*log(y(4,k)/n0),-5.50-kt*log(y(5,k)/n0)
 !             end do 
 !             close(111)
-           write (*,"(i6, 2(xg15.8),3(xg15.8))") it, bgapv*1000+25.6*t/298*log(y(4,1)*y(5,m)/nc*nv),y(6,1)*1000,y(4,1),y(5,m),y(1,1)
+!           write (*,"(i6, 2(xg15.8),3(xg15.8))") it, bgapv*1000+25.6*t/298*log(y(4,1)*y(5,m)/nc*nv),y(6,1)*1000,y(4,1),y(5,m),y(1,1)
              return
           end if 
           
