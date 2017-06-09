@@ -9,6 +9,6 @@
 0.2 1.e-20 !iteration step and converge criteria
 0.0000001 0.000001 ! field at boundary
 300  ! working temperature
-1 ! light intensity 
-test githup
+3  ! number of detailed output 
+0 800 1050 ! where do output details 
 
