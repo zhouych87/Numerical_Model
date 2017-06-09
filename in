@@ -1,4 +1,4 @@
-6 0 25 1 !recombination type, boundary field, dielectric, screen
+6 0 25 1 !recombination type, boundary field, dielectric, rmode, recombination 
 100  300 !MAX iteration, discrete points
 120 ! thickness
 4.0e-5  4.0e-5 ! diffusion coefficient,de,dh 
