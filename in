@@ -1,14 +1,14 @@
 6 0 25 1 !recombination type, boundary field, dielectric, rmode, recombination 
 100  300 !MAX iteration, discrete points
-120 ! thickness
-4.0e-5  4.0e-5 ! diffusion coefficient,de,dh 
-1.88   5000 !band gap for absorption, charge carrier lifetime
-1.5E+6 ! absorption length 
-3.20E+18  3.39E+18 ! nc, nv 
-1.2  ! band gap for output voltage 
+120 ! thickness (nm)
+4.0e-5  4.0e-5 ! diffusion coefficient,de,dh  (cm^2/s)
+1.88   5000 !band gap for light absorption(eV), charge carrier lifetime(ns)
+1.5E+5 ! absorption coefficient (cm-1)
+3.20E+18  3.39E+18 ! nc, nv (/cm^3) 
+1.2  ! band gap for output voltage (eV), will be different for organic solar cell light absortpion
 0.2 1.e-20 !iteration step and converge criteria
-0.0000001 0.000001 ! field at boundary
-300  ! working temperature
-1  !light intensity
+0.0000001 0.000001 ! field at boundary (V/cm)
+300  ! working temperature (K)
+1  !light intensity (times of AM1.5)
 
 
