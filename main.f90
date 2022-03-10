@@ -89,7 +89,7 @@
 !      write(*,*) "please notice that the DOS of perovskite is 10^21 "
 !      write(*,"(a,2xg15.6)") "ni;", ni
 !      gtmp=-2.2E+17*bgap+5.115E+17
-       gtmp=3.1027E+15*bgap^5 -4.2844e+16*bgap^4+ 2.1546e+17*bgap^3 - 4.3546e+17*bgap^2 + 1.3591e+17*bgap +4.2353e+17
+       gtmp=3.1027E+15*bgap**5 -4.2844e+16*bgap**4+ 2.1546e+17*bgap**3 - 4.3546e+17*bgap**2 + 1.3591e+17*bgap +4.2353e+17
         gtmp=lti*gtmp
 !       write(*,"(2(xg15.7))") (exp(1.0)-1)**2/(2*LT*LT*1.6E-19*gtmp/D), 3.18761/(1.6E-19*5.7E+4*gtmp*Lt)
             
